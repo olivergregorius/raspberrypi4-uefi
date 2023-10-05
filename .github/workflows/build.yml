@@ -1,0 +1,65 @@
+name: Raspberry Pi 4 Tiano Core UEFI firmware port build
+
+on:
+  push:
+    tags:
+      - '*'
+
+env:
+  REPOSITORY_URL: https://github.com/olivergregorius/raspberrypi4-uefi
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Set Version
+        id: set_version
+        run: echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+
+      - name: Set Up Build Environment
+        run: |
+          sudo apt update
+          sudo apt install gcc-aarch64-linux-gnu acpica-tools
+
+      - name: Checkout Submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Build UEFI
+        run: |
+          export WORKSPACE=$PWD
+          export PACKAGES_PATH=$WORKSPACE/edk2:$WORKSPACE/edk2-platforms:$WORKSPACE/edk2-non-osi
+          source edk2/edksetup.sh
+          make -C edk2/BaseTools
+          NUM_CPUS=$((`getconf _NPROCESSORS_ONLN` + 2))
+          build -n $NUM_CPUS -a AARCH64 -t GCC5 -b RELEASE -p edk2-platforms/Platform/RaspberryPi/RPi4/RPi4.dsc --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor=L"${{ env.REPOSITORY_URL }}" --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString=L"UEFI Firmware ${{steps.set_version.outputs.version}}"
+          cp Build/RPi4/RELEASE_GCC5/FV/RPI_EFI.fd .
+
+      - name: Download Raspberry Pi 4 firmware
+        run: |
+          curl -O -L https://github.com/raspberrypi/firmware//raw/master/boot/fixup4.dat
+          curl -O -L https://github.com/raspberrypi/firmware//raw/master/boot/start4.elf
+          curl -O -L https://github.com/raspberrypi/firmware//raw/master/boot/bcm2711-rpi-4-b.dtb
+          curl -O -L https://github.com/raspberrypi/firmware//raw/master/boot/overlays/gpio-shutdown.dtbo
+          curl -O -L https://github.com/raspberrypi/firmware//raw/master/boot/overlays/disable-bt.dtbo
+          mkdir overlays
+          mv *.dtbo overlays
+
+      - name: Zip UEFI
+        run: zip -r RaspberryPi4_UEFI_${{ steps.set_version.outputs.version }}.zip RPI_EFI.fd fixup4.dat start4.elf bcm2711-rpi-4-b.dtb overlays config.txt README.md
+
+      - name: Create release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: false
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: Raspberry Pi 4 UEFI ${{ steps.set_version.outputs.version }}
+          tag_name: ${{ steps.set_version.outputs.version }}
+          files: RaspberryPi4_UEFI_${{ steps.set_version.outputs.version }}.zip
