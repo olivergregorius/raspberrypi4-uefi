@@ -33,7 +33,7 @@ jobs:
           source edk2/edksetup.sh
           make -C edk2/BaseTools
           NUM_CPUS=$((`getconf _NPROCESSORS_ONLN` + 2))
-          GCC5_AARCH64_PREFIX=aarch64-linux-gnu- build -n $NUM_CPUS -a AARCH64 -t GCC5 -b RELEASE -p edk2-platforms/Platform/RaspberryPi/RPi4/RPi4.dsc --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor=L"${{ env.REPOSITORY_URL }}" --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString=L"UEFI Firmware ${{ env.GITHUB_REF_NAME }}"
+          GCC5_AARCH64_PREFIX=aarch64-linux-gnu- build -n $NUM_CPUS -a AARCH64 -t GCC5 -b RELEASE -p edk2-platforms/Platform/RaspberryPi/RPi4/RPi4.dsc --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor=L"${{ env.REPOSITORY_URL }}" --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString=L"UEFI Firmware ${{ github.ref_name }}"
           cp Build/RPi4/RELEASE_GCC5/FV/RPI_EFI.fd .
 
       - name: Download Raspberry Pi 4 Firmware
@@ -47,7 +47,7 @@ jobs:
           mv *.dtbo overlays
 
       - name: Zip UEFI
-        run: zip -r RaspberryPi4_UEFI_${{ env.GITHUB_REF_NAME }}.zip RPI_EFI.fd fixup4.dat start4.elf bcm2711-rpi-4-b.dtb overlays config.txt README.md
+        run: zip -r RaspberryPi4_UEFI_${{ github.ref_name }}.zip RPI_EFI.fd fixup4.dat start4.elf bcm2711-rpi-4-b.dtb overlays config.txt README.md
 
       - name: Upload UEFI Archive To Release
         uses: actions/upload-release-asset@v1
@@ -55,6 +55,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: RaspberryPi4_UEFI_${{ env.GITHUB_REF_NAME }}.zip
-          asset_name: RaspberryPi4_UEFI_${{ env.GITHUB_REF_NAME }}.zip
+          asset_path: RaspberryPi4_UEFI_${{ github.ref_name }}.zip
+          asset_name: RaspberryPi4_UEFI_${{ github.ref_name }}.zip
           asset_content_type: application/octet-stream
