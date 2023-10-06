@@ -42,11 +42,11 @@ jobs:
 
       - name: Download Raspberry Pi 4 Firmware
         run: |
-          curl -O -L https://github.com/raspberrypi/firmware//raw/master/boot/fixup4.dat
-          curl -O -L https://github.com/raspberrypi/firmware//raw/master/boot/start4.elf
-          curl -O -L https://github.com/raspberrypi/firmware//raw/master/boot/bcm2711-rpi-4-b.dtb
-          curl -O -L https://github.com/raspberrypi/firmware//raw/master/boot/overlays/gpio-shutdown.dtbo
-          curl -O -L https://github.com/raspberrypi/firmware//raw/master/boot/overlays/disable-bt.dtbo
+          curl -O -L https://github.com/raspberrypi/firmware/raw/master/boot/fixup4.dat
+          curl -O -L https://github.com/raspberrypi/firmware/raw/master/boot/start4.elf
+          curl -O -L https://github.com/raspberrypi/firmware/raw/master/boot/bcm2711-rpi-4-b.dtb
+          curl -O -L https://github.com/raspberrypi/firmware/raw/master/boot/overlays/gpio-shutdown.dtbo
+          curl -O -L https://github.com/raspberrypi/firmware/raw/master/boot/overlays/disable-bt.dtbo
           mkdir overlays
           mv *.dtbo overlays
 
