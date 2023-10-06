@@ -1,15 +1,15 @@
-name: Raspberry Pi 4 Tiano Core UEFI firmware port build
+name: Publish
 
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    types:
+      - published
 
 env:
   REPOSITORY_URL: https://github.com/olivergregorius/raspberrypi4-uefi
 
 jobs:
-  Build:
+  publish:
     runs-on: ubuntu-latest
 
     permissions:
@@ -40,7 +40,7 @@ jobs:
           GCC5_AARCH64_PREFIX=aarch64-linux-gnu- build -n $NUM_CPUS -a AARCH64 -t GCC5 -b RELEASE -p edk2-platforms/Platform/RaspberryPi/RPi4/RPi4.dsc --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor=L"${{ env.REPOSITORY_URL }}" --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString=L"UEFI Firmware ${{steps.set_version.outputs.version}}"
           cp Build/RPi4/RELEASE_GCC5/FV/RPI_EFI.fd .
 
-      - name: Download Raspberry Pi 4 firmware
+      - name: Download Raspberry Pi 4 Firmware
         run: |
           curl -O -L https://github.com/raspberrypi/firmware//raw/master/boot/fixup4.dat
           curl -O -L https://github.com/raspberrypi/firmware//raw/master/boot/start4.elf
@@ -53,13 +53,12 @@ jobs:
       - name: Zip UEFI
         run: zip -r RaspberryPi4_UEFI_${{ steps.set_version.outputs.version }}.zip RPI_EFI.fd fixup4.dat start4.elf bcm2711-rpi-4-b.dtb overlays config.txt README.md
 
-      - name: Create release
-        id: create_release
-        uses: softprops/action-gh-release@v1
+      - name: Upload UEFI Archive To Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          draft: false
-          prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
-          body: Raspberry Pi 4 UEFI ${{ steps.set_version.outputs.version }}
-          tag_name: ${{ steps.set_version.outputs.version }}
-          files: RaspberryPi4_UEFI_${{ steps.set_version.outputs.version }}.zip
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: RaspberryPi4_UEFI_${{ steps.set_version.outputs.version }}.zip
+          asset_name: RaspberryPi4_UEFI_${{ steps.set_version.outputs.version }}.zip
+          asset_content_type: application/octet-stream
