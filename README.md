@@ -10,6 +10,12 @@ The firmware is built from the official [EDK II Project](https://github.com/tian
 3. Extract the archive onto the SD-card.
 4. Insert the SD-card into the Raspberry Pi 4 and boot it up.
 
+## Changed UEFI Defaults
+
+- Option for using >3 GB of RAM is enabled by default
+- ACPI + Devicetree option is selected by default
+- Enabled auto PXE boot on boot failure
+
 ## Adjust UEFI Settings
 
 To enter the configuration menu, press <kbd>ESC</kbd> right after booting the device up.
