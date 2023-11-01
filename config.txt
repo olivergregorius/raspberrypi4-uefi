@@ -7,3 +7,4 @@ device_tree_address=0x1f0000
 device_tree_end=0x200000
 dtoverlay=gpio-shutdown
 dtoverlay=disable-bt
+gpio=17=op,dh
