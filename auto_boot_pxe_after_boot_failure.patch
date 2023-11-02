@@ -1,9 +1,10 @@
 Auto boot PXE after boot failure
 ---
 diff --git a/Platform/RaspberryPi/Library/PlatformBootManagerLib/PlatformBm.c b/Platform/RaspberryPi/Library/PlatformBootManagerLib/PlatformBm.c
---- a/Platform/RaspberryPi/Library/PlatformBootManagerLib/PlatformBm.c	(revision d6e36a151ff8365cdc55a6914cc5e6138d5788dc)
-+++ b/Platform/RaspberryPi/Library/PlatformBootManagerLib/PlatformBm.c	(date 1698878589127)
-@@ -367,6 +367,12 @@
+index ab8fdb586f..0e2c532dd5 100644
+--- a/Platform/RaspberryPi/Library/PlatformBootManagerLib/PlatformBm.c
++++ b/Platform/RaspberryPi/Library/PlatformBootManagerLib/PlatformBm.c
+@@ -367,6 +367,12 @@ PlatformRegisterBootOption (
             );
    ASSERT_EFI_ERROR (Status);
 
@@ -16,7 +17,7 @@ diff --git a/Platform/RaspberryPi/Library/PlatformBootManagerLib/PlatformBm.c b/
    BootOptions = EfiBootManagerGetLoadOptions (&BootOptionCount, LoadOptionTypeBoot);
 
    OptionIndex = EfiBootManagerFindLoadOption (&NewOption, BootOptions, BootOptionCount);
-@@ -818,7 +824,19 @@
+@@ -818,7 +824,19 @@ PlatformBootManagerUnableToBoot (
    //
    BootOptions = EfiBootManagerGetLoadOptions (&NewBootOptionCount,
                    LoadOptionTypeBoot);

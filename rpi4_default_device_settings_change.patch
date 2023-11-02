@@ -2,8 +2,9 @@ Enabling >3GB RAM
 Setting ACPI+Devicetree as default
 ---
 diff --git a/Platform/RaspberryPi/RPi4/RPi4.dsc b/Platform/RaspberryPi/RPi4/RPi4.dsc
---- a/Platform/RaspberryPi/RPi4/RPi4.dsc	(revision d6e36a151ff8365cdc55a6914cc5e6138d5788dc)
-+++ b/Platform/RaspberryPi/RPi4/RPi4.dsc	(date 1698878829384)
+index e04c76443d..ee45021fc9 100644
+--- a/Platform/RaspberryPi/RPi4/RPi4.dsc
++++ b/Platform/RaspberryPi/RPi4/RPi4.dsc
 @@ -512,16 +512,16 @@
    # Supporting > 3GB of memory.
    #
