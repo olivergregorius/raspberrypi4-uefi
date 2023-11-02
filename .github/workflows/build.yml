@@ -1,7 +1,9 @@
-name: Publish
+name: Build
 
 on:
   push:
+    tags-ignore:
+      - '**'
 
 env:
   REPOSITORY_URL: https://github.com/olivergregorius/raspberrypi4-uefi
