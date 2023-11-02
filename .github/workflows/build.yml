@@ -38,6 +38,6 @@ jobs:
       - name: Upload UEFI Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: Raspberry Pi 4 UEFI Artifacts
+          name: Raspberry Pi 4 UEFI Artifacts ${{ matrix.build_type }}
           path: |
             Build/RPi4/${{ matrix.build_type }}_GCC5/FV/RPI_EFI.fd
