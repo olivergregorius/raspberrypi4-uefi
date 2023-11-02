@@ -28,7 +28,7 @@ jobs:
 
       - name: Build UEFI
         run: |
-          cd edk2-platform
+          cd edk2-platforms
           git apply ../auto_boot_pxe_after_boot_failure.patch
           git apply ../rpi4_default_device_settings_change.patch
           cd ..
