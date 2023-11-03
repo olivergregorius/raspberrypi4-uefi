@@ -30,7 +30,7 @@ jobs:
 
       - name: Build UEFI
         run: |
-          patch --binary -d edk2 -p1 -i ../boot-order-fix.patch
+          patch --binary -d edk2 -p1 -i ../boot_order_fix.patch
           patch --binary -d edk2-platforms -p1 -i ../rpi4_default_device_settings_change.patch
           export WORKSPACE=$PWD
           export PACKAGES_PATH=$WORKSPACE/edk2:$WORKSPACE/edk2-platforms:$WORKSPACE/edk2-non-osi
