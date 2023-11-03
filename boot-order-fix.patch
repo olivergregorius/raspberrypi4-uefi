@@ -1,7 +1,31 @@
+Changed boot media enumeration to boot from removable and fixed boot media last (enables booting from PXE first by default)
+---
 diff --git a/MdeModulePkg/Library/UefiBootManagerLib/BmBoot.c b/MdeModulePkg/Library/UefiBootManagerLib/BmBoot.c
-index c3763c4483..7c0c4c5a53 100644
+index c3763c4483..c6c0cf05f3 100644
 --- a/MdeModulePkg/Library/UefiBootManagerLib/BmBoot.c
 +++ b/MdeModulePkg/Library/UefiBootManagerLib/BmBoot.c
+@@ -2148,15 +2148,15 @@ BmMatchPartitionDevicePathNode (
+ 
+ /**
+   Emuerate all possible bootable medias in the following order:
+-  1. Removable BlockIo            - The boot option only points to the removable media
+-                                    device, like USB key, DVD, Floppy etc.
+-  2. Fixed BlockIo                - The boot option only points to a Fixed blockIo device,
+-                                    like HardDisk.
+-  3. Non-BlockIo SimpleFileSystem - The boot option points to a device supporting
++  1. Non-BlockIo SimpleFileSystem - The boot option points to a device supporting
+                                     SimpleFileSystem Protocol, but not supporting BlockIo
+                                     protocol.
+-  4. LoadFile                     - The boot option points to the media supporting
++  2. LoadFile                     - The boot option points to the media supporting
+                                     LoadFile protocol.
++  3. Removable BlockIo            - The boot option only points to the removable media
++                                    device, like USB key, DVD, Floppy etc.
++  4. Fixed BlockIo                - The boot option only points to a Fixed blockIo device,
++                                    like HardDisk.
+   Reference: UEFI Spec chapter 3.3 Boot Option Variables Default Boot Behavior
+ 
+   @param BootOptionCount   Return the boot option count which has been found.
 @@ -2182,79 +2182,6 @@ BmEnumerateBootOptions (
    *BootOptionCount = 0;
    BootOptions      = NULL;

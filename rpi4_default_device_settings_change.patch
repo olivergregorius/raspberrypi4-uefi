@@ -1,3 +1,6 @@
+Enabling >3 GB RAM by default
+Using ACPI + Devicetree by default
+---
 diff --git a/Platform/RaspberryPi/RPi4/RPi4.dsc b/Platform/RaspberryPi/RPi4/RPi4.dsc
 index e04c76443d..ee45021fc9 100644
 --- a/Platform/RaspberryPi/RPi4/RPi4.dsc
