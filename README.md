@@ -14,7 +14,7 @@ The firmware is built from the official [EDK II Project](https://github.com/tian
 
 - Option for using >3 GB of RAM is enabled by default
 - ACPI + Devicetree option is selected by default
-- Enabled auto PXE boot on boot failure
+- Changed boot media enumeration to boot from removable and fixed boot media last (enables booting from PXE first by default)
 
 ## Adjust UEFI Settings
 
