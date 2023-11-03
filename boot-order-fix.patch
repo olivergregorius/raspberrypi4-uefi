@@ -1,0 +1,164 @@
+diff --git a/MdeModulePkg/Library/UefiBootManagerLib/BmBoot.c b/MdeModulePkg/Library/UefiBootManagerLib/BmBoot.c
+index c3763c4483..7c0c4c5a53 100644
+--- a/MdeModulePkg/Library/UefiBootManagerLib/BmBoot.c
++++ b/MdeModulePkg/Library/UefiBootManagerLib/BmBoot.c
+@@ -2182,79 +2182,6 @@ BmEnumerateBootOptions (
+   *BootOptionCount = 0;
+   BootOptions      = NULL;
+ 
+-  //
+-  // Parse removable block io followed by fixed block io
+-  //
+-  gBS->LocateHandleBuffer (
+-         ByProtocol,
+-         &gEfiBlockIoProtocolGuid,
+-         NULL,
+-         &HandleCount,
+-         &Handles
+-         );
+-
+-  for (Removable = 0; Removable < 2; Removable++) {
+-    for (Index = 0; Index < HandleCount; Index++) {
+-      Status = gBS->HandleProtocol (
+-                      Handles[Index],
+-                      &gEfiBlockIoProtocolGuid,
+-                      (VOID **)&BlkIo
+-                      );
+-      if (EFI_ERROR (Status)) {
+-        continue;
+-      }
+-
+-      //
+-      // Skip the logical partitions
+-      //
+-      if (BlkIo->Media->LogicalPartition) {
+-        continue;
+-      }
+-
+-      //
+-      // Skip the fixed block io then the removable block io
+-      //
+-      if (BlkIo->Media->RemovableMedia == ((Removable == 0) ? FALSE : TRUE)) {
+-        continue;
+-      }
+-
+-      //
+-      // Skip removable media if not present
+-      //
+-      if ((BlkIo->Media->RemovableMedia == TRUE) &&
+-          (BlkIo->Media->MediaPresent == FALSE))
+-      {
+-        continue;
+-      }
+-
+-      Description = BmGetBootDescription (Handles[Index]);
+-      BootOptions = ReallocatePool (
+-                      sizeof (EFI_BOOT_MANAGER_LOAD_OPTION) * (*BootOptionCount),
+-                      sizeof (EFI_BOOT_MANAGER_LOAD_OPTION) * (*BootOptionCount + 1),
+-                      BootOptions
+-                      );
+-      ASSERT (BootOptions != NULL);
+-
+-      Status = EfiBootManagerInitializeLoadOption (
+-                 &BootOptions[(*BootOptionCount)++],
+-                 LoadOptionNumberUnassigned,
+-                 LoadOptionTypeBoot,
+-                 LOAD_OPTION_ACTIVE,
+-                 Description,
+-                 DevicePathFromHandle (Handles[Index]),
+-                 NULL,
+-                 0
+-                 );
+-      ASSERT_EFI_ERROR (Status);
+-
+-      FreePool (Description);
+-    }
+-  }
+-
+-  if (HandleCount != 0) {
+-    FreePool (Handles);
+-  }
+-
+   //
+   // Parse simple file system not based on block io
+   //
+@@ -2348,6 +2275,79 @@ BmEnumerateBootOptions (
+     FreePool (Handles);
+   }
+ 
++  //
++  // Parse removable block io followed by fixed block io
++  //
++  gBS->LocateHandleBuffer (
++         ByProtocol,
++         &gEfiBlockIoProtocolGuid,
++         NULL,
++         &HandleCount,
++         &Handles
++         );
++
++  for (Removable = 0; Removable < 2; Removable++) {
++    for (Index = 0; Index < HandleCount; Index++) {
++      Status = gBS->HandleProtocol (
++                      Handles[Index],
++                      &gEfiBlockIoProtocolGuid,
++                      (VOID **)&BlkIo
++                      );
++      if (EFI_ERROR (Status)) {
++        continue;
++      }
++
++      //
++      // Skip the logical partitions
++      //
++      if (BlkIo->Media->LogicalPartition) {
++        continue;
++      }
++
++      //
++      // Skip the fixed block io then the removable block io
++      //
++      if (BlkIo->Media->RemovableMedia == ((Removable == 0) ? FALSE : TRUE)) {
++        continue;
++      }
++
++      //
++      // Skip removable media if not present
++      //
++      if ((BlkIo->Media->RemovableMedia == TRUE) &&
++          (BlkIo->Media->MediaPresent == FALSE))
++      {
++        continue;
++      }
++
++      Description = BmGetBootDescription (Handles[Index]);
++      BootOptions = ReallocatePool (
++                      sizeof (EFI_BOOT_MANAGER_LOAD_OPTION) * (*BootOptionCount),
++                      sizeof (EFI_BOOT_MANAGER_LOAD_OPTION) * (*BootOptionCount + 1),
++                      BootOptions
++                      );
++      ASSERT (BootOptions != NULL);
++
++      Status = EfiBootManagerInitializeLoadOption (
++                 &BootOptions[(*BootOptionCount)++],
++                 LoadOptionNumberUnassigned,
++                 LoadOptionTypeBoot,
++                 LOAD_OPTION_ACTIVE,
++                 Description,
++                 DevicePathFromHandle (Handles[Index]),
++                 NULL,
++                 0
++                 );
++      ASSERT_EFI_ERROR (Status);
++
++      FreePool (Description);
++    }
++  }
++
++  if (HandleCount != 0) {
++    FreePool (Handles);
++  }
++
+   BmMakeBootOptionDescriptionUnique (BootOptions, *BootOptionCount);
+   return BootOptions;
+ }
